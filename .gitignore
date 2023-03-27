@@ -3,7 +3,6 @@ data_airplane/
 dataset/
 new_methods/utils/dcam*
 new_methods/utils/model_trained
-new_methods/utils/Res
 new_methods/utils/scam*
 new_methods/utils/new*
 new_methods/utils/test_[ds]*
