@@ -5,7 +5,7 @@ from torchvision import models
 from model.DA import DA
 from model.PAM_CAM import *
 from expr.train import device
-
+num=0
 class FC_ResNet(nn.Module):
 
     def __init__(self, model, num_classes, cos_alpha, num_maps):
@@ -51,9 +51,15 @@ class FC_ResNet(nn.Module):
 
     def forward(self, x, label=None):
         x = self.features[0:7](x)
+        global num
+        with open('newrscam_file.pkl', 'wb') as f:  # open a text file
+            pickle.dump(x, f)  # serialize the list
         self.parent_map = x
 
         x = self.features[7](x)
+        with open('newrdcam_file.pkl', 'wb') as f:  # open a text file
+            pickle.dump(x, f)  # serialize the list
+            num += 1
         # x = self.cls(x)
         x = self.DA(x)
 

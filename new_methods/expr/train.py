@@ -1,3 +1,4 @@
+
 import torch
 import numpy as np
 import time
@@ -11,7 +12,7 @@ torch.cuda.manual_seed_all(0)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-device = torch.device("cuda: 3" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def train_model(model, optimizer, scheduler, dataloaders, dataset_sizes,
                 model_path, num_epochs=25):
@@ -38,6 +39,7 @@ def train_model(model, optimizer, scheduler, dataloaders, dataset_sizes,
             # Iterate over data.
             # for batch_idx, (_, inputs, targets) in enumerate(dataloaders):
             for inputs, targets in dataloaders:
+                # print(len(inputs))
                 inputs = inputs.to(device)
                 targets = targets.to(device)
                 # zero the parameter gradients
@@ -117,7 +119,7 @@ if __name__ == "__main__":
     cos_alpha = [0.005, 0.01, 0.015, 0.02, 0.05, 0.1, 0.2]
     name = 'airplane'
     # load data
-    from utils.load_data import get_dataloader
+    from new_methods.utils.load_data import get_dataloader
     dataloaders, dataset_sizes, categories = get_dataloader(name=name, batch_size=16)
     for select_model in ['DA_PAM', 'DA']:
         for cos in cos_alpha:
@@ -130,16 +132,16 @@ if __name__ == "__main__":
                     path = '../utils/model_trained/params_single2_'
                 # load model
                 if select_model == 'CAM':
-                    from model.resnet import model
+                    from new_methods.model.resnet import model
 
                     model_ft = model(pretrained=True, num_classes=len(categories))
 
                 elif select_model == 'DA':
-                    from model.resnet_DA import model
+                    from new_methods.model.resnet_DA import model
 
                     model_ft = model(pretrained=True, num_classes=len(categories), cos_alpha=cos, num_maps=k)
                 else:
-                    from model.resnet_DA_PAM import model
+                    from new_methods.model.resnet_DA_PAM import model
 
                     model_ft = model(pretrained=True, num_classes=len(categories), cos_alpha=cos, num_maps=k)
                 model_ft = model_ft.to(device)

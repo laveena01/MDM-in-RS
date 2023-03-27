@@ -1,3 +1,4 @@
+
 class bndresult:
     def __init__(self, x1, y1, x2, y2, categories=None, confidence=None):
         self.x1 = x1
@@ -7,6 +8,8 @@ class bndresult:
         self.categories = categories
         if confidence is not None:
             self.confidence = round(confidence, 2)
+        else:
+            self.confidence = None
 
     def __str__(self):
         return self.categories + ' ' + str(self.confidence) + ' ' + str(self.x1) + ' ' + str(self.y1) + ' ' + str(self.x2) + ' ' + str(self.y2) + '\n'
@@ -23,4 +26,3 @@ if __name__ == '__main__':
     # print(t[0])
     # print(t[1])
     print(c in t)
-

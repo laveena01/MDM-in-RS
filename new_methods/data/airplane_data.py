@@ -37,8 +37,7 @@ test_data_transform = transforms.Compose([
 ])
 
 
-train_dataset = datasets.ImageFolder(root='/home/xxxxujian/SourceCode/'
-                                            'data/train_airplane/train',
+train_dataset = datasets.ImageFolder(root=r'D:\CODE_AND_RESULTS\dataset\data_airplane\train',
                                      transform=data_transform)
 train_dataset_loader = torch.utils.data.DataLoader(train_dataset,
                                              batch_size=16, shuffle=True,

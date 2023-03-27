@@ -1,6 +1,6 @@
 import os
 import csv
-store_path = '/home/xxxxujian/SourceCode/X_Project/Utils/Res/'
+store_path = r'D:\CODE_AND_RESULTS\new_methods\utils\Res'
 path = '../utils/model_trained/params_single2_'
 select_model = 'DA_PAM'
 methods = ['all', 'pam', 'cam']

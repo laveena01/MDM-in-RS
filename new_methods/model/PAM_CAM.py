@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from model.attention import *
+from new_methods.model.attention import *
 
 class PAM_CAM(nn.Module):
     def __init__(self, in_dim):

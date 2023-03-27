@@ -3,8 +3,8 @@ import torch
 import random
 import torch.nn.functional as F
 import numpy as np
-from expr.train import device
-from model.PAM_CAM import *
+from new_methods.expr.train import device
+from new_methods.model.PAM_CAM import *
 
 class DA(nn.Module):
     def __init__(self, in_dim, k, input_size):

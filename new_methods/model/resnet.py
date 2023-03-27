@@ -1,7 +1,8 @@
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
-
+import pickle
+num=0
 class FC_ResNet(nn.Module):
 
     def __init__(self, model, num_classes):
@@ -42,8 +43,15 @@ class FC_ResNet(nn.Module):
 
     def forward(self, x, label=None):
         x = self.features[0:7](x)
+        global num
+        with open('newrscam_file.pkl', 'wb') as f:  # open a text file
+            pickle.dump(x, f)  # serialize the list
+        #self.parent_map = x
         self.parent_map = x
         x = self.features[7](x)
+        with open('newrdcam_file.pkl', 'wb') as f:  # open a text file
+            pickle.dump(x, f)  # serialize the list
+            num += 1
         out = self.cls(x)
         self.salience_maps = out
         peak_list, aggregation = None, F.adaptive_avg_pool2d(out, 1).squeeze(2).squeeze(2)
