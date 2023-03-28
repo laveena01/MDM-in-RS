@@ -66,17 +66,21 @@ def generateCAM(img_path, cam, store_path=None, labels=None):
     return cam_img
 
 
-def generateBBox(cam):
+def generateBBox(cam, val):
     # use cam generate bbox
     #:param img: orgin image
     #:param cam: cam image
     #:return: list(bbox)
 
-    ret, thresh = cv2.threshold(cam.copy(), 0, 100,
-                                cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    if val:
+        ret, thresh = cv2.threshold(cam.copy(), 0, 100,
+                                    cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-    contours, hier = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
-                                      cv2.CHAIN_APPROX_SIMPLE)
+        contours, hier = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
+                                          cv2.CHAIN_APPROX_SIMPLE)
+    else:
+        contours, hier = cv2.findContours(cam.astype(np.uint8), cv2.RETR_EXTERNAL,
+                                          cv2.CHAIN_APPROX_SIMPLE)
     res = []
     for i in contours:
         x, y, w, h = cv2.boundingRect(i)
@@ -127,7 +131,7 @@ def comparePretoGt(pre, gt):
 
     FN = len(gt) - TP
     FP = len(pre) - TP
-    return [TP, FP, FN], bbox_pre0_5
+    return (TP, FP, FN), bbox_pre0_5
 
 
 def mergeCAM(Box3, Box4):

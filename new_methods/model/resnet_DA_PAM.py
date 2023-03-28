@@ -125,13 +125,14 @@ class FC_ResNet(nn.Module):
             # pickle.dump(x, f)  # serialize the list
             num += 1
         # print(x.size())
+        self.dcam = x
         x = self.cls(x)
-        fig = plt.figure(figsize=(13, 13))
-        fig.add_subplot(1, 2, 1)
-        plt.imshow(x[0][0].cpu().detach().numpy(), cmap='gray')
-        fig.add_subplot(1, 2, 2)
-        plt.imshow(x[0][1].cpu().detach().numpy(), cmap='gray')
-        print(x[0][1])
+        # fig = plt.figure(figsize=(13, 13))
+        # fig.add_subplot(1, 2, 1)
+        # plt.imshow(x[0][0].cpu().detach().numpy(), cmap='gray')
+        # fig.add_subplot(1, 2, 2)
+        # plt.imshow(x[0][1].cpu().detach().numpy(), cmap='gray')
+        # print(x[0][1])
         # fig = plt.figure(figsize=(13, 13))
         self.salience_maps = x
 
@@ -159,6 +160,9 @@ class FC_ResNet(nn.Module):
     def get_salience_maps(self):
         # salience_maps = self.DA.get_salience_maps()
         return self.parent_map, self.salience_maps
+
+    def get_dcam(self):
+        return self.dcam
 
 
 def model(pretrained=True, num_classes=10, cos_alpha=0.01, num_maps=4, pam=True, cam=True):
