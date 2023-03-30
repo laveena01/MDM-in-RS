@@ -29,18 +29,18 @@ def generateCAM(img_path, cam, store_path=None, labels=None):
     cam = cam.cpu().squeeze(0).detach().numpy()
     img_shape = img.shape
     # print("SIZE b ",img_shape)
-    print(f"Size = {cam.shape}")
+    # print(f"Size = {cam.shape}")
     if labels is not None:
         cam = cam[labels]
     else:
         cam = cam.sum(axis=0) #  row wise sum
-    print(f"Size = {cam.shape}")
+    # print(f"Size = {cam.shape}")
     cam = cam - np.min(cam)
     cam_img = cam / np.max(cam)
     cam_img = np.uint8(255 * cam_img)
-    print(cam_img.shape)
+    # print(cam_img.shape)
     cam_img = cv2.resize(cam_img, (img_shape[1], img_shape[0]))
-    cv2.imshow('image', cam_img)
+    # cv2.imshow('image', cam_img)
     # src_img = img.transpose(1, 2, 0)
     # mean = np.array([0.485, 0.456, 0.406])
     # std = np.array([0.229, 0.224, 0.225])
@@ -54,8 +54,8 @@ def generateCAM(img_path, cam, store_path=None, labels=None):
     result = heatmap * 0.3 + img * 0.5
 
     result = np.uint8(255 - 1 * result)
-    print(result.shape)
-    cv2.imshow('map', result)
+    # print(result.shape)
+    # cv2.imshow('map', result)
     # cv2.waitKey(3500)
     # #
      #if labels is None:
@@ -177,16 +177,16 @@ def generateBBoxGT(str):
 
         objectname = namelist[0].childNodes[0].data
 
-        bndbox = objects.getElementsByTagName('robndbox')
+        bndbox = objects.getElementsByTagName('bndbox')
 
         for box in bndbox:
-            x1_list = box.getElementsByTagName('x_left_bottom')
+            x1_list = box.getElementsByTagName('xmin')
             x1 = int(x1_list[0].childNodes[0].data)
-            y1_list = box.getElementsByTagName('y_left_bottom')
+            y1_list = box.getElementsByTagName('ymin')
             y1 = int(y1_list[0].childNodes[0].data)
-            x2_list = box.getElementsByTagName('x_right_top')
+            x2_list = box.getElementsByTagName('xmax')
             x2 = int(x2_list[0].childNodes[0].data)
-            y2_list = box.getElementsByTagName('y_right_top')
+            y2_list = box.getElementsByTagName('ymax')
             y2 = int(y2_list[0].childNodes[0].data)
             # (y0, x0, y1, x1)
             res.append(bndresult(x1, y1, x2, y2))

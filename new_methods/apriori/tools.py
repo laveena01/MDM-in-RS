@@ -14,6 +14,7 @@ def generate_apriori(img_path, cam, store_path, minimum_support):
     img = cv2.imread(img_path)
     cam = cam.cpu().squeeze(0).detach().numpy()
     img_shape = img.shape
+    # print(img.shape)
 
     if not os.path.exists(store_path): os.makedirs(store_path)
 
@@ -51,7 +52,7 @@ def generate_apriori(img_path, cam, store_path, minimum_support):
 
     # TODO Save the Image
     # TODO heatmap
-    # cam_img = cv2.resize(img, (cam.shape[1], cam.shape[2]))
+    img = cv2.resize(img, (img_shape[0], img_shape[1]))
     # heatmap = cv2.applyColorMap(img, cv2.COLORMAP_JET)
     #
     # result = heatmap * 0.3 + img * 0.5
@@ -60,14 +61,14 @@ def generate_apriori(img_path, cam, store_path, minimum_support):
     # print(result.shape)
     # cv2.imshow('map', result)
     global num
-    plt.imshow(img)
+    # plt.imshow(img)
     # if minimum_support==0.4:
     #     store_path=store_path+'scam_'+str(num)
     # else:
     #     store_path=store_path+'dcam_'+str(num)
     #     num += 1
-
-    plt.savefig(os.path.join(store_path, img_path.split('/')[-1]))
+    cv2.imwrite(store_path + img_path.split('/')[-1], img)
+    # plt.savefig(os.path.join(store_path, img_path.split('/')[-1]))
     plt.show()
     return img
 

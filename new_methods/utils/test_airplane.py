@@ -12,7 +12,11 @@ import cv2
 import pickle
 from new_methods.utils.visualise import show
 
+folder = ['\\3\\', '\\4\\', '\\3a\\', '\\4a\\', '\\34\\', '\\3a4a\\', '\\33a\\', '\\34a\\', '\\33a4a\\', '\\43a\\', '\\44a\\',
+              '\\43a4a\\', '\\3a34\\', '\\4a34\\']
 
+bbox_list_name = ['bbox_pre3', 'bbox_pre4', 'bbox_pre3a', 'bbox_pre4a', 'bbox_pre34', 'bbox_pre3a4a', 'bbox_pre33a', 'bbox_pre34a',
+                     'bbox_pre33a4a', 'bbox_pre43a', 'bbox_pre44a', 'bbox_pre43a4a', 'bbox_pre3a34', 'bbox_pre4a34']
 def test(model, store_path):
     model.to(device)
     model.eval()
@@ -21,8 +25,8 @@ def test(model, store_path):
     test_data_size = 0
     corrects = 0.0
     str = r'D:\CODE_AND_RESULTS\data\test_airplane'
-    folder = ['/3/', '/4/', '/3a/', '/4a/', '/34/', '/3a4a/', '/33a/', '/34a/', '/33a4a/', '/43a/', '/44a/',
-              '/43a4a/', '/3a34/', '/4a34/']
+    folder = ['\\3\\', '\\4\\', '\\3a\\', '\\4a\\', '\\34\\', '\\3a4a\\', '\\33a\\', '\\34a\\', '\\33a4a\\', '\\43a\\', '\\44a\\',
+              '\\43a4a\\', '\\3a34\\', '\\4a34\\']
 
     TP = [0.0] * 14
     FP = [0.0] * 14
@@ -43,8 +47,6 @@ def test(model, store_path):
         outputs = model(inputs)
         _, preds = torch.max(outputs, 1)
 
-        print("Hi")
-        print(preds)
 
         layer_map3, layer_map4 = model.get_salience_maps()
         cam3 = generateCAM(str + '/img/' + img, layer_map3, store_path, None)
@@ -90,8 +92,10 @@ def test(model, store_path):
         # print(type(ar3))
         # print(bbox_pre34)
 
-        bbox_list = [bbox_pre3, bbox_pre4, bbox_pre3a, bbox_pre4a, bbox_pre34, bbox_pre3a4a, bbox_pre33a, bbox_pre34a,
-                     bbox_pre33a4a, bbox_pre43a, bbox_pre44a, bbox_pre43a4a, bbox_pre3a34, bbox_pre4a34]
+        bbox_list = [bbox_pre3, bbox_pre4, bbox_pre3a, bbox_pre4a, bbox_pre34, bbox_pre3a4a,
+                          bbox_pre33a, bbox_pre34a,
+                          bbox_pre33a4a, bbox_pre43a, bbox_pre44a, bbox_pre43a4a, bbox_pre3a34,
+                          bbox_pre4a34]
 
         common_bbox_test = []
         for i, bbox in enumerate(bbox_list):
@@ -109,15 +113,17 @@ def test(model, store_path):
 
         i = 0
         for k, loc in zip(bbox_list, folder):
+            # print(os.path.join(store_path, loc))
+            print(store_path + loc + img)
             vi_img = cv2.imread(str + '/img/' + img)
             vi_img = drawRect(vi_img, bbox_gt, (255, 0, 0))  # Blue
             vi_img = drawRect(vi_img, k, (255, 255, 255))  # White
-            if os.path.exists(os.path.join(store_path, loc)): os.makedirs(os.path.join(store_path, loc))
+            # if not os.path.exists(os.path.join(store_path, loc)): os.makedirs(os.path.join(store_path, loc))
             cv2.imwrite(store_path + loc + img, vi_img)
             i = i + 1
         #
-        cv2.imshow('t', vi_img)
-        cv2.waitKey(5500)
+        # cv2.imshow('t', vi_img)
+        # cv2.waitKey(5500)
 
         corrects += torch.sum(preds == 1)
         test_data_size = test_data_size + 1
@@ -140,9 +146,9 @@ if __name__ == "__main__":
     select_model = 'DA_PAM'
     # select_model = 'CAM'
     methods = ['pam', 'cam']
-    K = [16]  # correct
+    K = [4,8,16,32]  # correct
     # COS = [0.01, 0.02, 0.1, 0.5, 0.7] #correct
-    COS = [0.05]
+    COS = [0.01]
     CA = []
     TA = []
     FA = []
@@ -155,7 +161,7 @@ if __name__ == "__main__":
 
     with open(file, 'w') as csvfile:
         spamwriter = csv.writer(csvfile, dialect='excel')
-        spamwriter.writerow(['method', 'K', 'COS', 'TP', 'FP', 'FN', 'Precison', 'Recall', 'cls_res'])
+        spamwriter.writerow(['box_name','method', 'K', 'COS', 'TP', 'FP', 'FN', 'Precison', 'Recall', 'cls_res'])
         for method in methods:
             if method == 'all':
                 cam = True
@@ -181,15 +187,17 @@ if __name__ == "__main__":
                     model_ft.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 
                     final_path = os.path.join(store_path, method, str(k) + '_' + str(cos))
-                    for t in ['3', '4', '3+4', 'heatmap_3', 'heatmap_4']:
+                    for t in [x[1:-1] for x in folder]:
                         temp = os.path.join(final_path, t)
-
+                        # print(temp)
                         if not os.path.exists(temp):
                             os.makedirs(temp)
+                    # exit(0)
 
+                    # print(final_path)
                     res = test(model_ft, final_path)
-                    for i in [2]:
-                        spamwriter.writerow([str(method), str(k), str(cos), res[1][i], res[2][i], res[3][i],
+                    for i in range(14):
+                        spamwriter.writerow([bbox_list_name[i],str(method), str(k), str(cos), res[1][i], res[2][i], res[3][i],
                                              res[1][i] / (res[1][i] + res[2][i]), res[1][i] / (res[1][i] + res[3][i]),
                                              res[0]])
                         pass

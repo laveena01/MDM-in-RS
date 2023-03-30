@@ -1,3 +1,0 @@
-method,K,COS,TP,FP,FN,Precison,Recall,cls_res
-pam,16,0.05,0.0,18.0,31.0,0.0,0.0,tensor(0.)
-cam,16,0.05,0.0,18.0,31.0,0.0,0.0,tensor(0.)
