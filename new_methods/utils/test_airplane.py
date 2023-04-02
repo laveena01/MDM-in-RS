@@ -45,7 +45,7 @@ def test(model, store_path):
 
         # outputs
         outputs = model(inputs)
-        _, preds = torch.max(outputs, 1)
+        confidence, preds = torch.max(outputs, 1)
 
 
         layer_map3, layer_map4 = model.get_salience_maps()
@@ -61,10 +61,10 @@ def test(model, store_path):
         # print(cam4)
         # cv2.imshow('image', cam4)
         # cv2.waitKey(0)
-        bbox_pre3 = generateBBox(cam3, True)
-        bbox_pre4 = generateBBox(cam4, True)
-        bbox_pre3a = generateBBox(cam3a, False)
-        bbox_pre4a = generateBBox(cam4a, False)
+        bbox_pre3 = generateBBox(cam3, confidence, True)
+        bbox_pre4 = generateBBox(cam4, confidence, True)
+        bbox_pre3a = generateBBox(cam3a, None, False)
+        bbox_pre4a = generateBBox(cam4a, None, False)
 
         bbox_gt = generateBBoxGT(str + '/annotations/' + os.path.splitext(img)[0] + '.xml')
         bbox_pre34 = mergeCAM(bbox_pre3, bbox_pre4)
@@ -145,8 +145,8 @@ if __name__ == "__main__":
     path = r'D:\CODE_AND_RESULTS\new_methods\utils\model_trained\tparams_single2_'
     select_model = 'DA_PAM'
     # select_model = 'CAM'
-    methods = ['pam', 'cam']
-    K = [4,8,16,32]  # correct
+    methods = ['pam']
+    K = [4]  # correct
     # COS = [0.01, 0.02, 0.1, 0.5, 0.7] #correct
     COS = [0.01]
     CA = []

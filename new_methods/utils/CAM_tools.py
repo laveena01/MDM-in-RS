@@ -1,5 +1,5 @@
-
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 import xml.dom.minidom
 from new_methods.utils.bndresult import bndresult
@@ -33,7 +33,7 @@ def generateCAM(img_path, cam, store_path=None, labels=None):
     if labels is not None:
         cam = cam[labels]
     else:
-        cam = cam.sum(axis=0) #  row wise sum
+        cam = cam.sum(axis=0)  # row wise sum
     # print(f"Size = {cam.shape}")
     cam = cam - np.min(cam)
     cam_img = cam / np.max(cam)
@@ -58,7 +58,7 @@ def generateCAM(img_path, cam, store_path=None, labels=None):
     # cv2.imshow('map', result)
     # cv2.waitKey(3500)
     # #
-     #if labels is None:
+    # if labels is None:
     #     cv2.imwrite(store_path+'/heatmap_3/'+img_path.split('/')[-1], result)
     # else:
     #     cv2.imwrite(store_path+'/heatmap_4/'+img_path.split('/')[-1], result)
@@ -66,16 +66,15 @@ def generateCAM(img_path, cam, store_path=None, labels=None):
     return cam_img
 
 
-def generateBBox(cam, val):
+def generateBBox(cam, confidence, is_apriori):
     # use cam generate bbox
     #:param img: orgin image
     #:param cam: cam image
     #:return: list(bbox)
 
-    if val:
+    if is_apriori:
         ret, thresh = cv2.threshold(cam.copy(), 0, 100,
                                     cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
         contours, hier = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
                                           cv2.CHAIN_APPROX_SIMPLE)
     else:
@@ -84,7 +83,7 @@ def generateBBox(cam, val):
     res = []
     for i in contours:
         x, y, w, h = cv2.boundingRect(i)
-        res.append(bndresult(x, y, x + w, y + h))
+        res.append(bndresult(x, y, x + w, y + h, confidence=confidence))
     return res
 
 
