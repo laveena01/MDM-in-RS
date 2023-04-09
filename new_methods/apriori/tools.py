@@ -42,7 +42,7 @@ def generate_apriori(img_path, cam, store_path, minimum_support):
     for y, x in zip(frequent_itemsets['support'], frequent_itemsets['itemsets']):
         for i in x:
             a.append(i)
-            b.append(y)
+            # b.append(y)
 
     img = np.zeros([cam.shape[1], cam.shape[2]])
     for i in range(cam.shape[1]):
@@ -69,7 +69,7 @@ def generate_apriori(img_path, cam, store_path, minimum_support):
     #     num += 1
     cv2.imwrite(store_path + img_path.split('/')[-1], img)
     # plt.savefig(os.path.join(store_path, img_path.split('/')[-1]))
-    plt.show()
+    # plt.show()
     return img
 
 

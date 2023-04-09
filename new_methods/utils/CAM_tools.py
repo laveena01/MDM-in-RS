@@ -123,6 +123,7 @@ def comparePretoGt(pre, gt):
     for i in gt:
         for j in pre:
             iou = compute_iou(i, j)
+            # if iou>=0.50
             if iou >= 0.50:
                 TP = TP + 1
                 bbox_pre0_5.append(j)

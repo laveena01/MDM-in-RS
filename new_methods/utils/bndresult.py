@@ -12,8 +12,7 @@ class bndresult:
             self.confidence = None
 
     def __str__(self):
-        return self.categories + ' ' + str(self.confidence) + ' ' + str(self.x1) + ' ' + str(self.y1) + ' ' + str(self.x2) + ' ' + str(self.y2) + '\n'
-
+        return f"{self.categories} {self.confidence} {self.x1} {self.y1} {self.x2} {self.y2}"
     def __eq__(self, other):
         return self.x1 == other.x1 and self.x2 == other.x2 and self.y1 == other.y1 and self.y2 == other.y2
 
