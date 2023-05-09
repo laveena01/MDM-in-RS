@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import xml.dom.minidom
 from new_methods.utils.bndresult import bndresult
+import pandas as pd
 
 sj = 0.2
 xj = 0.002
@@ -168,7 +169,11 @@ def generateBBoxGT(str):
     collection = DOMTree.documentElement
     filenamelist = collection.getElementsByTagName("filename")
     filename = filenamelist[0].childNodes[0].data
-
+    size = collection.getElementsByTagName("size")
+    width_list = collection.getElementsByTagName("width")
+    width = int(width_list[0].childNodes[0].data)
+    height_list = collection.getElementsByTagName("height")
+    height = int(height_list[0].childNodes[0].data)
     objectlist = collection.getElementsByTagName("object")
 
     for objects in objectlist:
@@ -191,9 +196,24 @@ def generateBBoxGT(str):
             # (y0, x0, y1, x1)
             res.append(bndresult(x1, y1, x2, y2))
     # print(res)
-    return res
 
 
+
+
+    return res,width,height
+
+# def generateBBoxGT(annotaion,img_name):
+#     df = pd.read_csv(annotaion)
+#     res = []
+#     for ind in df.index:
+#         if df['image_id'][ind]==img_name:
+#             coord = list(df['geometry'][ind].split(','))
+#             x1 = int(coord[0][2:])
+#             y1 = int(coord[1][1:-1])
+#             x2 = int(coord[2][2:])
+#             y2 = int(coord[5][1:-1])
+#             res.append(bndresult(x1, y1, x2, y2))
+#     return res
 def drawRect(img, contours, color):
     for c in contours:
         cv2.rectangle(img, (c.x1, c.y1), (c.x2, c.y2), color, 2)

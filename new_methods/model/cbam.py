@@ -48,10 +48,10 @@ class CBAM(nn.Module):
         return out
 class FC_ResNet(nn.Module):
 
-    def __init__(self, model, num_classes, cos_alpha, num_maps, enable_CBAM=True):
+    def __init__(self, model, num_classes, enable_CBAM=True):
         super(FC_ResNet, self).__init__()
         # super parameters
-        self.cos_alpha = cos_alpha
+        # self.cos_alpha = cos_alpha
         #num=256
 
         # feature encoding
@@ -65,9 +65,7 @@ class FC_ResNet(nn.Module):
             model.layer3,
             model.layer4)
         if enable_CBAM:
-            self.cbam1 = CBAM(64, 16, 7)
-            self.cbam2 = CBAM(128, 16, 7)
-            self.cbam3 = CBAM(256, 16, 7)
+            self.cbam = CBAM(256, 16, 7)
         # DA
         # self.DA = DA(256, num_maps, 448)
         # self.PAM = PAM_CAM(1024)
@@ -96,18 +94,11 @@ class FC_ResNet(nn.Module):
 
 
     def forward(self, x, labels=None):
-        # x = self.features[0:7](x)
-        # x=self.cbam(x)
-        # self.parent_map = x
-        x = self.features[0:5](x)
-        x=self.cbam1(x)
-        x = self.features[5](x)
-        x=self.cbam2(x)
-        x = self.features[6](x)
-        x=self.cbam3(x)
-        x = self.features[7](x)
+        x = self.features[0:7](x)
+        x=self.cbam(x)
         self.parent_map = x
 
+        x = self.features[7](x)
         self.dcam=x
         x = self.cls(x)
         self.salience_maps = x
@@ -136,14 +127,16 @@ class FC_ResNet(nn.Module):
     def get_salience_maps(self):
         # salience_maps = self.DA.get_salience_maps()
         return self.parent_map, self.salience_maps
-
-    def get_dcam(self):
-        return self.dcam
+    # def get_dcam(self):
+    #     return self.dcam
 
 def model(pretrained=True, num_classes=10, cos_alpha=0.01, num_maps=4, pam=True, cam=True):
     model = models.resnet34(pretrained=pretrained)
-    model_ft = FC_ResNet(model, num_classes=num_classes, cos_alpha=cos_alpha, num_maps=num_maps, enable_CBAM=True)
+    # model_ft = FC_ResNet(model, num_classes=num_classes, cos_alpha=cos_alpha, num_maps=num_maps, enable_CBAM=True)
+    model_ft = FC_ResNet(model, num_classes=num_classes, enable_CBAM=True)
+
     return model_ft
 
 if __name__ == '__main__':
     test_cbam = CBAM(256,16,7)
+    print(test_cbam)
